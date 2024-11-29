@@ -91,6 +91,7 @@ sub render {
   my $lookup = $hub->species_defs->prodnames_to_urls_lookup;
   foreach my $tree (@$all_trees) {
    my %ref_genome_2_internal_info;
+   my $curr_filter_taxon;
    for my $species (@{$tree->root->get_all_nodes()}) {
     #  next if $species_info{$species->name}; # $species->name is the name used by newick_format() above
 
@@ -137,9 +138,17 @@ sub render {
              $target_sp->{$k} = $sp->{$k} if $sp->{$k};
          }
          $target_sp->{has_strain} = 1;
+         # Assign the currently active filter taxon name to this reference genome.
+         # This assumes that each filtered taxon has one reference genome, and
+         # filtered taxa do not overlap. Both assumptions are valid as of e114.
+         $target_sp->{filter_taxon_name} = $curr_filter_taxon;
+         undef $curr_filter_taxon;
      }
      if ($filters_with_strains{$sp->{name}}) {
         $sp->{expand_strains} = 1;
+        # Set the currently active filter taxon name.
+        # The reference genome is within this taxon.
+        $curr_filter_taxon = $sp->{name};
      }
     }
   }

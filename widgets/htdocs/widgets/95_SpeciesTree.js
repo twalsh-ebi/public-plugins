@@ -551,7 +551,10 @@ Ensembl.SpeciesTree.tnt_theme_tree_simple_species_tree = function(species_detail
 
 function toggleNodes(tree_vis, species_filter, species_info) {
   tree_vis.root().apply(function (node) {
-    if (species_filter === 'all' && node.data().name && species_info[node.data().name]['has_strain'] && !node.is_collapsed()) {
+    if (node.data().name
+        && species_info[node.data().name]['has_strain']
+        && species_info[node.data().name]['filter_taxon_name'] !== species_filter
+        && !node.is_collapsed()) {
       console.log(node.data().name, ' collapsed')
       node.toggle();
     }
